@@ -56,22 +56,38 @@ public class CodeGenServiceTest {
     @Test
     @SneakyThrows
     public void testGeneratorCode() {
+        Proc("Goods");
+        Proc("GoodsOnline");
+        Proc("GoodPic");
+        Proc("GoodsCategory");
+        Proc("AgencyWorkers");
+     //   Proc("GoodsOnlineEditInfo");
+
+    //    Proc("GoodsCategorySort");
+    }
+
+    private void Proc(String className) throws IllegalAccessException {
         GenConfig config = new GenConfig();
 
         TableRequest request = new TableRequest();
+//关键表
+
+        request.setTableName(className);
+
         request.setPrepend("jdbc:mysql://");
         request.setUrl("122.112.199.65:3306/jkdData");
         request.setUsername("develop");
         request.setPassword("jkd123");
-        request.setTableName("GoodsOnlineEditInfo");
+
+        config.setSavePath("I:\\jkdgit\\be-api-clientb");
         //config.setPackageName("I:/genecode/1/");
-        config.setSavePath("I:/jkdgit/be-api-clientb/src/main/java/com/jkd/");
-     //   request.setVoPackageName("goods");
+     //   config.setSavePath("I:/jkdgit/be-api-clientb/src/main/java/com/jkd/");
+        //   request.setVoPackageName("goods");
         config.setRequest(request);
-       // config.setComments("用户角色信息");
+        // config.setComments("用户角色信息");
         config.setTablePrefix("");
 
-      byte[] zip = codeGenService.generatorCode(config);
+        byte[] zip = codeGenService.generatorCode(config);
 //         OutputStream outputStream = new FileOutputStream(new File("I:/genecode/1/" + request.getTableName()));
 //        IoUtil.write(outputStream);
     }

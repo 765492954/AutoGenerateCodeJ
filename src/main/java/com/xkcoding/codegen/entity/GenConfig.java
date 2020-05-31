@@ -48,9 +48,10 @@ public class GenConfig {
 
 
     /**
-     * 包名
+     * 保存路径
      */
     private String savePath;
+
 
 
 }

@@ -23,19 +23,28 @@ import java.time.LocalDateTime;
  */
 @Data
 @AllArgsConstructor
-@ApiModel
-public class Update${className}Query extends    BaseQuery  {
+@ApiModel(value = "${comments}：Update${className}")
+public class Update${className}Query    {
 
-  #foreach ($column in $columns)
+  #foreach ($column in $updateColumns)
 
     /**
      * $column.comments
      */
-    #if($column.columnName == $pk.columnName)
-    @Min(1)
+    #if($column.attrType == "Long")
+    @ApiModelProperty(value = "$column.comments",example = "1234343523")
+    #end
+    #if($column.attrType == "String")
+    @ApiModelProperty(value = "$column.comments",example = "defaultStr")
+    #end
+    #if($column.attrType == "Date")
+    @ApiModelProperty(value = "$column.comments",example = "Mon Mar 23 11:04:12 CST 2020")
+    #end
+
+    #if($column.attrType!="Long"&&$column.attrType!="String"&&$column.attrType!="Date")
+    @ApiModelProperty(value = "$column.comments",example = "1")
     #end
     @NotNull
-    @ApiModelProperty(value = "$column.comments")
     private $column.attrType $column.lowerAttrName;
   #end
 

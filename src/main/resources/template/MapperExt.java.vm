@@ -1,0 +1,32 @@
+package ${package}.${moduleName}.mapper;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Mapper;
+import com.jkd.common.entity.${className};
+import ${package}.${moduleName}.mapper.${className}Mapper;
+import com.jkd.query.${voPackageName}.*;
+import com.jkd.vo.${voPackageName}.*;
+
+import java.util.List;
+
+
+
+/**
+ * <p>
+ * ${comments}
+ * </p>
+ *
+ * @package:  ${package}.${moduleName}.mapper
+ * @description: ${comments}
+ * @author: ${author}
+ * @date: Created in ${datetime}
+ * @copyright: Copyright (c) ${year}
+ * @version: V1.0
+ * @modified: ${author}
+ */
+@Mapper
+public interface ${className}ExtMapper extends  ${className}Mapper {
+
+    IPage<${className}Vo> selectListExt(Page<Select${className}Query> page,Select${className}Query query);
+}

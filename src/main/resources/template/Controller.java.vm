@@ -28,7 +28,7 @@ import com.jkd.query.${voPackageName}.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/${pathName}")
-@Api(description = "${className}Controller", tags = {"${comments}"})
+@Api( tags = {"${comments}"})
 public class ${className}Controller {
 
     private final ${className}Service ${classname}Service;
@@ -40,7 +40,7 @@ public class ${className}Controller {
      */
     @GetMapping("${classname}s")
     @ApiOperation(value = "分页查询${comments} (select${className})", notes = "GET")
-    public ResponseMessage list${className}(@Valid @ModelAttribute  ${selectQuery} ${classname}) {
+    public ResponseMessage list${className}(@Valid @ModelAttribute  Select${className}Query ${classname}) {
       return  ${classname}Service.select${className}(${classname});
     }
 

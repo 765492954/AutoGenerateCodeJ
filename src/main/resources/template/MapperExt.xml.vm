@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package}.${moduleName}.mapper.${className}ExtMapper">
+
+
+  <!-- 用于select查询公用抽取的列 -->
+  <sql id="Base_Column_List">
+    #foreach($column in $columns)
+      $column.lowerAttrName$column.lowerAttrName
+    #end
+  </sql>
+
+  <select id="selectListExt" resultType="com.jkd.vo.${voPackageName}.${className}Vo"  parameterType="com.jkd.query.${voPackageName}.Select${className}Query">
+        select
+        <include refid="Base_Column_List" />
+         from    ${tableName}  where   is_deleted=0
+        #foreach($column in $whereColumns)
+          <if test="$$column.lowerAttrName != null">and $column.columnName=#{$column.lowerAttrName} </if>
+        #end
+  </select>
+</mapper>
+
+
+
+

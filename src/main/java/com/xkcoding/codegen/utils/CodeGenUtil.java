@@ -14,6 +14,7 @@ import com.xkcoding.codegen.entity.GenGlobalConfig;
 import com.xkcoding.codegen.entity.TableEntity;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.commons.text.WordUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -55,6 +56,9 @@ public class CodeGenUtil {
     private final String CONTROLLER_JAVA_IN = "InsertVo.java.vm";
     private final String CONTROLLER_JAVA_UP = "UpdateVo.java.vm";
     private final String CONTROLLER_JAVA_RE = "ResultVo.java.vm";
+    private final String MAPPER_JAVA_VM_EXT = "MapperExt.java.vm";
+    private final String MAPPER_XML_VM_EXT  = "MapperExt.xml.vm";
+
 
 
     private List<String> getTemplates() {
@@ -70,6 +74,8 @@ public class CodeGenUtil {
         templates.add("template/InsertVo.java.vm");
         templates.add("template/UpdateVo.java.vm");
         templates.add("template/ResultVo.java.vm");
+        templates.add("template/MapperExt.java.vm");
+        templates.add("template/MapperExt.xml.vm");
         //templates.add("template/api.js.vm");
         return templates;
     }
@@ -114,6 +120,9 @@ public class CodeGenUtil {
 
             //列名转换成Java属性名
             String attrName = columnToJava(columnEntity.getColumnName());
+
+            attrName=lowerLast(attrName);
+
             columnEntity.setCaseAttrName(attrName);
             columnEntity.setLowerAttrName(StrUtil.lowerFirst(attrName));
             columnEntity.setUperAttrName(StrUtil.upperFirst(attrName));
@@ -121,6 +130,14 @@ public class CodeGenUtil {
             //列的数据类型，转换成Java类型
             String attrType = props.getStr(columnEntity.getDataType(), "unknownType");
             columnEntity.setAttrType(attrType);
+
+            //判断是否包含IsDeleted
+
+            if(attrName.toLowerCase().equals("IsDeleted".toLowerCase()))
+            {
+                columnEntity.setAttrType("Integer");
+            }
+
             if (!hasBigDecimal && "BigDecimal".equals(attrType)) {
                 hasBigDecimal = true;
             }
@@ -159,15 +176,6 @@ public class CodeGenUtil {
             genConfig.getRequest().setVoPackageName(tableEntity.getLowerClassName().toLowerCase());
         }
 
-        GenGlobalConfig priConfig=GenGlobalConfig.builder()
-                .config(genConfig)
-                .tableEntity(tableEntity)
-                .voPackageName(genConfig.getRequest().getVoPackageName())
-                .build().init();
-        mapAddObj(map,priConfig);
-
-
-
         if (StrUtil.isNotBlank(genConfig.getComments())) {
             map.put("comments", genConfig.getComments());
         } else {
@@ -184,6 +192,7 @@ public class CodeGenUtil {
             map.put("moduleName", genConfig.getModuleName());
         } else {
             map.put("moduleName", props.getStr("moduleName"));
+            genConfig.setModuleName(props.getStr("moduleName"));
         }
 
         if (StrUtil.isNotBlank(genConfig.getPackageName())) {
@@ -192,7 +201,17 @@ public class CodeGenUtil {
         } else {
             map.put("package", props.getStr("package"));
             map.put("mainPath", props.getStr("mainPath"));
+            genConfig.setPackageName(props.getStr("package"));
         }
+
+        GenGlobalConfig priConfig=GenGlobalConfig.builder()
+                .config(genConfig)
+                .tableEntity(tableEntity)
+                .voPackageName(genConfig.getRequest().getVoPackageName())
+                .build().init();
+        mapAddObj(map,priConfig);
+
+
         VelocityContext context = new VelocityContext(map);
 
         //获取模板列表
@@ -200,6 +219,10 @@ public class CodeGenUtil {
         for (String template : templates) {
             if (StrUtil.isBlank(template)) {
                break;
+            }
+            var fileName=getFileName(template,genConfig );
+            if (StrUtil.isBlank(fileName)) {
+                break;
             }
             //渲染模板
             StringWriter sw = new StringWriter();
@@ -209,7 +232,7 @@ public class CodeGenUtil {
             BufferedWriter out = null;
             try {
                // File file = new    File("I:/genecode/1/" + getFileName(template,genConfig ));
-                File file = new    File( getFileName(template,genConfig ));
+                File file = new    File( fileName);
                 // 如果文件夹不存在则创建
                 if (!file.getParentFile().exists()&&!file.isDirectory()){
                     file.getParentFile().mkdirs();
@@ -321,6 +344,7 @@ public class CodeGenUtil {
             map.put("moduleName", genConfig.getModuleName());
         } else {
             map.put("moduleName", props.getStr("moduleName"));
+            genConfig.setModuleName(props.getStr("moduleName"));
         }
 
         if (StrUtil.isNotBlank(genConfig.getPackageName())) {
@@ -329,6 +353,7 @@ public class CodeGenUtil {
         } else {
             map.put("package", props.getStr("package"));
             map.put("mainPath", props.getStr("mainPath"));
+            genConfig.setPackageName(props.getStr("package"));
         }
         VelocityContext context = new VelocityContext(map);
 
@@ -447,11 +472,26 @@ public class CodeGenUtil {
 
     private String getFileName(String template,GenConfig config) {
         // 包路径
-        String packagePath = config.getSavePath();
+      //  String packagePath = config.getSavePath();
         // 资源路径
-        String resourcePath = "";
+     //   String resourcePath = config.getSavePath();
         // api路径
-        String apiPath = "";
+    //    String apiPath = "";
+        // 包路径
+        String packagePath = config.getSavePath()+ File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator;
+        // 资源路径
+        String resourcePath = config.getSavePath() + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator;
+        // api路径
+        String apiPath = config.getSavePath() + File.separator + "api" + File.separator;
+
+        var packageName=config.getPackageName();
+
+        var moduleName=config.getModuleName();
+
+        if (StrUtil.isNotBlank(config.getPackageName())) {
+            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
+        }
+
         String className=config.getRequest().getTableName();
 
         String voPre="query" + File.separator+config.getRequest().getVoPackageName() + File.separator;
@@ -502,6 +542,14 @@ public class CodeGenUtil {
 //            return apiPath + className.toLowerCase() + ".js";
 //        }
 
+        if (template.contains(MAPPER_JAVA_VM_EXT)) {
+            return packagePath + "mapper" + File.separator + className + "ExtMapper.java";
+        }
+
+        if (template.contains(MAPPER_XML_VM_EXT)) {
+            return resourcePath + "mapper" + File.separator + className + "ExtMapper.xml";
+        }
+
         return null;
     }
 
@@ -543,5 +591,21 @@ public class CodeGenUtil {
             map.put(fieldName, value);
         }
         return map;
+    }
+
+    //替换最后一个字符为小写
+    public static String lowerLast(CharSequence str) {
+        if (null == str) {
+            return null;
+        } else {
+            if (str.length() > 0) {
+                char lastChar = str.charAt(str.length()-1);
+                if (Character.isUpperCase(lastChar)) {
+                    return    StrUtil.sub(str, 0,str.length()-1)+Character.toLowerCase(lastChar);
+                }
+            }
+
+            return str.toString();
+        }
     }
 }
