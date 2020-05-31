@@ -1,0 +1,40 @@
+package ${package}.${moduleName}.vo.${voPackageName};
+
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import lombok.experimental.Accessors;
+import lombok.Builder;
+
+/**
+ *
+ *
+
+ * @author: ${author}
+ * @date: Created in ${datetime}
+ * @copyright: Copyright (c) ${year}
+ * @modified: ${author}
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel
+@Accessors(chain = true)
+@Builder
+public class  ${className}Vo  {
+
+  #foreach ($column in $columns)
+    /**
+     * $column.comments
+     */
+    @ApiModelProperty(value = "$column.comments")
+    private $column.attrType $column.lowerAttrName;
+  #end
+
+}

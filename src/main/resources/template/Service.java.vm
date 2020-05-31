@@ -1,0 +1,27 @@
+package ${package}.${moduleName}.service;
+
+import com.jkd.common.message.ResponseMessage;
+import com.jkd.common.query.BaseQuery;
+import com.jkd.query.${voPackageName}.*;
+
+
+/**
+ * <p>
+ * ${comments}服务
+ * </p>
+ *
+ * @description: ${comments}服务
+ * @author: ${author}
+ * @date: Created in ${datetime}
+ * @copyright: Copyright (c) ${year}
+ * @version: V1.0
+ * @modified: ${author}
+ */
+public interface ${className}Service   {
+
+    public ResponseMessage select${className}( Select${className}Query request);
+##    public ResponseMessage get${className}( Select${className}Query request);
+    public ResponseMessage insert${className}(Insert${className}Query request);
+    ResponseMessage update${className}(Update${className}Query request);
+    ResponseMessage delete${className}(Delete${className}Query request);
+}

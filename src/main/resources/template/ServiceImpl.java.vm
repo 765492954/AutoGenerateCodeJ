@@ -1,0 +1,77 @@
+package ${package}.${moduleName}.service.impl;
+
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jkd.common.message.ResponseMessage;
+import com.jkd.common.utils.CodeMessageHandle;
+import com.jkd.common.entity.*;
+import com.jkd.mapper.*;
+import com.jkd.query.${voPackageName}.*;
+import com.jkd.vo.${voPackageName}.*;
+import com.jkd.service.${className}Service;
+
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import javax.validation.Valid;
+
+/**
+ * <p>
+ * ${comments}服务
+ * </p>
+ *
+ * @description: ${comments}服务
+ * @author: ${author}
+ * @date: Created in ${datetime}
+ * @copyright: Copyright (c) ${year}
+ * @version: V1.0
+ * @modified: ${author}
+ */
+@Service
+@AllArgsConstructor
+public class ${className}ServiceImpl   implements ${className}Service {
+
+    private final CodeMessageHandle codeMessageHandle;
+    private final ${className}Mapper ${classname}Mapper;
+
+    @Override
+    public ResponseMessage select${className}(@Valid Select${className}Query request) {
+        IPage<${className}Vo> ${classname}Page=${mapperName}.selectList(new Page<${className}>(request.getPageIndex(),request.getPageSize()),request);
+        return codeMessageHandle.code(200).dataList(${classname}Page.getRecords()).total(${classname}Page.getTotal());
+    }
+
+##    @Override
+##    public ResponseMessage get${className}s(@Valid Select${className}Query request) {
+##        IPage<${classname}Vo> ${classname}=${className}Mapper.selectOne(new Page<${className}>(request.getPageIndex(),request.getPageSize()),request);
+##        return codeMessageHandle.code(200).data(${classname});
+##    }
+
+    @Override
+    public ResponseMessage insert${className}(Insert${className}Query request) {
+        ${className} ${classname}=new ${className}();
+
+        #foreach ($column in $columns)
+        ${classname}.set${column.uperAttrName}(request.get${column.uperAttrName}());
+        #end
+        int ret=${mapperName}.insertOne(${classname});
+        return codeMessageHandle.code(ret>0?200:1003);
+    }
+
+    @Override
+    public ResponseMessage update${className}(Update${className}Query  request) {
+        ${className} ${classname}=new ${className}();
+
+        #foreach ($column in $columns)
+            ${classname}.set${column.uperAttrName}(request.get${column.uperAttrName}());
+        #end
+        int ret=${mapperName}.updateOne(${classname});
+        return codeMessageHandle.code(ret>0?200:1003);
+    }
+
+    @Override
+    public ResponseMessage delete${className}(Delete${className}Query request) {
+        int ret = ${mapperName}.deleteOne(request.get${pk.uperAttrName}());
+        return codeMessageHandle.code(ret > 0 ? 200 : 1007);
+    }
+
+}
