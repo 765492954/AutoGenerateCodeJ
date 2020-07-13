@@ -23,4 +23,5 @@ public class SpringBootDemoCodegenApplication {
         SpringApplication.run(SpringBootDemoCodegenApplication.class, args);
     }
 
+
 }
